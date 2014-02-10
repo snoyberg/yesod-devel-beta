@@ -1,0 +1,49 @@
+name:                yesod-devel
+version:             0.1.0.0
+synopsis:            New version of yesod devel
+description:         Work in progress, ultimately will be merged with yesod-bin.
+homepage:            http://www.yesodweb.com/
+license:             MIT
+license-file:        LICENSE
+author:              Michael Snoyman
+maintainer:          michael@snoyman.com
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.8
+
+executable yesod-devel
+  main-is:             app/yesod-devel.hs
+  other-modules:       Yesod.Devel
+                       Yesod.Devel.Builder
+                       Yesod.Devel.Capture
+                       Yesod.Devel.Daemon
+                       Yesod.Devel.PortManager
+                       Yesod.Devel.Process
+                       Yesod.Devel.ReverseProxy
+                       Yesod.Devel.Runner
+                       Yesod.Devel.Scan
+                       Yesod.Devel.Status
+  build-depends:       base >= 4 && < 5
+                    ,  system-fileio >= 0.3
+                    ,  stm >= 2.4
+                    ,  async >= 2.0
+                    ,  text >= 0.11
+                    ,  yesod-core >= 1.2
+                    ,  yesod-eventsource >= 1.1
+                    ,  conduit >= 1.0
+                    ,  wai-eventsource >= 2.0
+                    ,  blaze-builder >= 0.3
+                    ,  aeson >= 0.7
+                    ,  warp >= 2.0
+                    ,  bytestring >= 0.10
+                    ,  time >= 1.4
+                    ,  http-client >= 0.2
+                    ,  http-client-tls >= 0.2
+                    ,  http-types >= 0.8
+                    ,  wai >= 2.0
+                    ,  http-reverse-proxy >= 0.3
+                    ,  network-conduit >= 1.0
+                    ,  network >= 2.3
+                    ,  process >= 1.1
+                    ,  hamlet
+                    ,  blaze-html
