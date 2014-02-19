@@ -25,6 +25,10 @@ import Blaze.ByteString.Builder.Char.Utf8 (fromShow, fromText)
 import Data.Monoid ((<>))
 import Data.Aeson (encode)
 import Network.Wai.Handler.Warp (run)
+import Control.Concurrent.MVar
+import Control.Concurrent (forkIO)
+import Control.Exception (finally)
+import Control.Monad (void)
 
 data App = App
     { appCapture :: !Capture
@@ -108,8 +112,10 @@ getEventR = repEventSource $ \_ -> do
         yield $ ServerEvent (Just $ fromText name) Nothing [content]
 
 status :: Int -- ^ app port
+       -> MVar String
        -> App
        -> IO ()
-status port app = do
+status port mexitMsg app = do
     appl <- toWaiAppPlain app
-    daemon "status" (run port appl) (logMessage $ appCapture app)
+    void $ forkIO $ run port appl `finally`
+                    putMVar mexitMsg "Status app exited"

@@ -15,17 +15,22 @@ import Network.HTTP.ReverseProxy
 import Data.Text (Text)
 import Text.Hamlet (shamletFile)
 import Text.Blaze.Html.Renderer.Utf8 (renderHtmlBuilder)
+import Control.Concurrent.MVar
+import Control.Concurrent (forkIO)
+import Control.Exception (finally)
+import Control.Monad (void)
 
 reverseProxy :: Int -- ^ listening port
              -> Int -- ^ status port
-             -> (Text -> IO ()) -- ^ log
+             -> MVar String
              -> IO (TVar (Maybe Int))
-reverseProxy listeningPort statusPort log' = do
+reverseProxy listeningPort statusPort mexitMsg = do
     iport <- newTVarIO Nothing
     let start = withManager tlsManagerSettings
               $ run listeningPort
               . waiProxyToSettings (getWPR iport) settings
-    daemon "reverse proxy" start log'
+    void $ forkIO $ start `finally`
+                    putMVar mexitMsg "Reverse proxy exited"
     return iport
   where
     getWPR iport _ = do
