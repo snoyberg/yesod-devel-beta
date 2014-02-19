@@ -10,11 +10,13 @@ import Yesod.Devel.PortManager (PortManager, getPort, recyclePort)
 import Control.Monad (join)
 import Control.Concurrent (threadDelay)
 import Filesystem (createTree, removeFile)
+import Filesystem.Path.CurrentOS (FilePath)
 import Control.Concurrent.STM
 import Control.Concurrent.Async (async, cancelWith)
-import Control.Exception (finally)
+import Control.Exception (finally, try, IOException)
 import Data.Text (Text, pack)
 import Data.Monoid ((<>))
+import Prelude hiding (FilePath)
 
 runner :: (Text -> IO ())
        -> PortManager
@@ -44,7 +46,8 @@ runner log portManager mainPort reversedPort runProc lastCompile = do
             return x
 
         threadDelay 100000
-        removeFile "yesod-devel/devel-terminate"
+        removeFileIfExists "yesod-devel/devel-terminate"
+        removeFileIfExists "dist/devel-terminate" -- compatibility
         port <- getPort portManager
         log $ "Got new listening port of " <> pack (show port)
         up <- async $ runProc "runghc"
@@ -62,3 +65,10 @@ runner log portManager mainPort reversedPort runProc lastCompile = do
             writeTVar reversedPort (Just port)
 
         loop killUserProcess $ Just newTimestamp
+
+removeFileIfExists :: FilePath -> IO ()
+removeFileIfExists fp = do
+    ex <- try $ removeFile fp
+    case ex :: Either IOException () of
+        Left _ -> return ()
+        Right () -> return ()

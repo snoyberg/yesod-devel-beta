@@ -47,4 +47,5 @@ executable yesod-devel
                     ,  process >= 1.1
                     ,  hamlet
                     ,  blaze-html
+                    ,  system-filepath
   ghc-options: -threaded
