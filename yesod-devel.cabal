@@ -42,7 +42,7 @@ executable yesod-devel
                     ,  http-types >= 0.8
                     ,  wai >= 2.0
                     ,  http-reverse-proxy >= 0.3
-                    ,  network-conduit >= 1.0
+                    ,  network-conduit == 1.0.4
                     ,  network >= 2.3
                     ,  process >= 1.1
                     ,  hamlet
